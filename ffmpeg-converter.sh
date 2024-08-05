@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# created by Evan Scherrer. Last updated 08/29/2023
+# created by Evan Scherrer. Last updated 08/4/2024
 # you can contact me on Discord @jovan04 (legacy - Jovan04#8647)
 # or by email at evanne.scherrer@gmail.com
 # github: https://github.com/Jovan-04/
@@ -10,12 +10,15 @@
 # targetDirectory is the directory you want to place the converted files
 # sourceType is the file extension for the files you want to convert
 # targetType is the file extension that the source files will be converted *to* 
+# outputQuality is a quality rating, from 0 (highest) to 9 (lowest); see https://trac.ffmpeg.org/wiki/Encode/MP3
 ##############################################################################################################
-sourceDirectory="/home/evan/Desktop/flac2mp3/larger-test/FLAC" # these should be absolute file paths
-targetDirectory="/home/evan/Desktop/flac2mp3/larger-test/MP3" # do not put an ending /
+sourceDirectory="/home/evan/evan-personal/flac2mp3/FLAC" # these should be absolute file paths
+targetDirectory="/home/evan/evan-personal/flac2mp3/MP3" # do not put an ending /
 
 sourceType="flac" # these are the file extensions for the source and target files
 targetType="mp3" # do not put a preceding .
+
+outputQuality=0 # see https://trac.ffmpeg.org/wiki/Encode/MP3; VBR only (0-9)
 ##############################################################################################################
 
 
@@ -66,7 +69,7 @@ find $sourceDirectory -type f -name "*.$sourceType" | tr -d '\r' | while IFS= re
     relativePathNE="${relativePath%.*}" # relative file path, without extension
     echo "converting $relativePath from .$sourceType to .$targetType"
     
-    ffmpeg -nostdin -i "$sourceDirectory$relativePathNE.$sourceType" -n "$targetDirectory$relativePathNE.$targetType" > /dev/null 2>> "output.log"
+    ffmpeg -nostdin -i "$sourceDirectory$relativePathNE.$sourceType" -n -q:a "$outputQuality" "$targetDirectory$relativePathNE.$targetType" > /dev/null 2>> "output.log"
 
     if [ $? -ne 0 ]; then
         echo "Error converting $relativePath" >> "output.log"
